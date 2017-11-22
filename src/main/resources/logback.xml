@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration level="INFO">
+
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.dir}/../logs/info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${user.dir}/../logs/info.%d{yyyyMMdd}.log</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.dir}/../logs/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${user.dir}/../logs/error.%d{yyyyMMdd}.log</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <logger name="log4jdbc" level="OFF" />
+    <logger name="org.apache.commons.digester" level="OFF" />
+    <logger name="jdbc" level="OFF"/>
+    <logger name="org.jboss.logging" level="OFF" />
+
+    <logger name="org.hibernate" level="DEBUG" >
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+    </logger>
+
+    <logger name="java.sql" level="INFO" >
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+    </logger>
+
+    <logger name="org.springframework" level="DEBUG" >
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+    </logger>
+
+    <logger name="org.slf4j.logback" level="INFO" >
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+    </logger>
+
+    <logger name="jdbc.sqlonly" level="DEBUG" additivity="false">
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+    </logger>
+
+    <logger name="jdbc.resultsettable" level="DEBUG" additivity="false">
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+    </logger>
+
+    <logger name="com.kakao.reward" level="DEBUG" >
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>
