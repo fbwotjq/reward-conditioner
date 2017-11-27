@@ -1,4 +1,4 @@
-package com.kakao.reward.conditioner.vo;
+package com.fbwotjq.action.conditioner.vo;
 
 import lombok.Data;
 import lombok.ToString;

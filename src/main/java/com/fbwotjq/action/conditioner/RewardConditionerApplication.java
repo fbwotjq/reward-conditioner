@@ -1,4 +1,4 @@
-package com.kakao.reward.conditioner;
+package com.fbwotjq.action.conditioner;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

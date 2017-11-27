@@ -1,4 +1,4 @@
-package com.kakao.reward.conditioner;
+package com.fbwotjq.action.conditioner;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

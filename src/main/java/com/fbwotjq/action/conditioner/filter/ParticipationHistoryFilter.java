@@ -1,6 +1,6 @@
-package com.kakao.reward.conditioner.filter;
+package com.fbwotjq.action.conditioner.filter;
 
-import com.kakao.reward.conditioner.vo.UserEventMessage;
+import com.fbwotjq.action.conditioner.vo.UserEventMessage;
 import org.springframework.integration.core.MessageSelector;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;

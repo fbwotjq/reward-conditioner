@@ -1,11 +1,12 @@
-package com.kakao.reward.conditioner.configuration;
+package com.fbwotjq.action.conditioner.configuration;
 
-import com.kakao.reward.conditioner.filter.ParticipationHistoryFilter;
-import com.kakao.reward.conditioner.filter.UserActionExpireFilter;
+import com.fbwotjq.action.conditioner.filter.ParticipationHistoryFilter;
+import com.fbwotjq.action.conditioner.filter.UserActionExpireFilter;
+import com.fbwotjq.action.conditioner.handler.*;
+import com.fbwotjq.action.conditioner.vo.AppLoginUserEventMessage;
+import com.fbwotjq.action.conditioner.vo.UnKnownUserEventMessage;
 import com.kakao.reward.conditioner.handler.*;
-import com.kakao.reward.conditioner.vo.AppLoginUserEventMessage;
-import com.kakao.reward.conditioner.vo.UnKnownUserEventMessage;
-import com.kakao.reward.conditioner.vo.UserEventMessage;
+import com.fbwotjq.action.conditioner.vo.UserEventMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -41,16 +42,23 @@ public class UserEventIntegrationConfiguration {
     @Resource(name = "chargeProcessChannel") MessageChannel chargeProcessChannel;
     @Resource(name = "completeProcessChannel") MessageChannel completeProcessChannel;
 
-    @Autowired ChargeProcessingHandler chargeProcessingHandler;
-    @Autowired CompleteProcessingHandler completeProcessingHandler;
-    @Autowired EndProcessingHandler endProcessingHandler;
+    @Autowired
+    ChargeProcessingHandler chargeProcessingHandler;
+    @Autowired
+    CompleteProcessingHandler completeProcessingHandler;
+    @Autowired
+    EndProcessingHandler endProcessingHandler;
 
-    @Autowired NoneHandler noneHandler;
-    @Autowired ExceptionHandler exceptionHandler;
+    @Autowired
+    NoneHandler noneHandler;
+    @Autowired
+    ExceptionHandler exceptionHandler;
     @Autowired FilterDiscardHandler filterDiscardHandler;
 
-    @Autowired ParticipationHistoryFilter participationHistoryFilter;
-    @Autowired UserActionExpireFilter userActionExpireFilter;
+    @Autowired
+    ParticipationHistoryFilter participationHistoryFilter;
+    @Autowired
+    UserActionExpireFilter userActionExpireFilter;
 
     @Bean("routerSpecEnrichHeaders")
     public MessageHeaders routerSpecEnrichHeaders() {

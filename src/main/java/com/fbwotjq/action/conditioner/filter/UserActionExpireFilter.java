@@ -1,4 +1,4 @@
-package com.kakao.reward.conditioner.filter;
+package com.fbwotjq.action.conditioner.filter;
 
 import org.springframework.integration.core.GenericSelector;
 import org.springframework.stereotype.Component;

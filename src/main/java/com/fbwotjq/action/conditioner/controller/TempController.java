@@ -1,7 +1,7 @@
-package com.kakao.reward.conditioner.controller;
+package com.fbwotjq.action.conditioner.controller;
 
-import com.kakao.reward.conditioner.vo.AppLoginUserEventMessage;
-import com.kakao.reward.conditioner.vo.UnKnownUserEventMessage;
+import com.fbwotjq.action.conditioner.vo.UnKnownUserEventMessage;
+import com.fbwotjq.action.conditioner.vo.AppLoginUserEventMessage;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;

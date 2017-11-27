@@ -1,6 +1,6 @@
-package com.kakao.reward.conditioner.handler;
+package com.fbwotjq.action.conditioner.handler;
 
-import com.kakao.reward.conditioner.vo.UserEventMessage;
+import com.fbwotjq.action.conditioner.vo.UserEventMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
