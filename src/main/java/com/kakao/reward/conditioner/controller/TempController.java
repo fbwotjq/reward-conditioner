@@ -5,6 +5,7 @@ import com.kakao.reward.conditioner.vo.UnKnownUserEventMessage;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,7 +30,9 @@ public class TempController {
             @RequestBody AppLoginUserEventMessage appLoginUserEventMessage
     ) {
 
-        Message<AppLoginUserEventMessage> message = MessageBuilder.withPayload(appLoginUserEventMessage).build();
+        Map<String, Object> headerMap = new HashMap<String, Object>();
+        headerMap.put(MessageHeaders.ERROR_CHANNEL, "exceptionChannel");
+        Message<AppLoginUserEventMessage> message = MessageBuilder.withPayload(appLoginUserEventMessage).copyHeaders(headerMap).build();
         userEventMessageChannel.send(message);
 
         Map<String, Object> map = new HashMap<>();

@@ -2,9 +2,7 @@ package com.kakao.reward.conditioner.configuration;
 
 import com.kakao.reward.conditioner.filter.ParticipationHistoryFilter;
 import com.kakao.reward.conditioner.filter.UserActionExpireFilter;
-import com.kakao.reward.conditioner.handler.AppLoginHandler;
-import com.kakao.reward.conditioner.handler.EndProcessingHandler;
-import com.kakao.reward.conditioner.handler.NoneHandler;
+import com.kakao.reward.conditioner.handler.*;
 import com.kakao.reward.conditioner.vo.AppLoginUserEventMessage;
 import com.kakao.reward.conditioner.vo.UnKnownUserEventMessage;
 import com.kakao.reward.conditioner.vo.UserEventMessage;
@@ -14,11 +12,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.integration.dsl.FilterEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.dsl.support.Consumer;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -27,29 +30,61 @@ import javax.annotation.Resource;
 public class UserEventIntegrationConfiguration {
 
     @Resource(name = "userEventMessageChannel") MessageChannel userEventMessageChannel;
+
     @Resource(name = "defaultOutputChannel") MessageChannel defaultOutputChannel;
+    @Resource(name = "exceptionChannel") MessageChannel exceptionChannel;
+    @Resource(name = "filterDiscardChannel") MessageChannel filterDiscardChannel;
+
     @Resource(name = "appLoginUserEventMessageChannel") MessageChannel appLoginUserEventMessageChannel;
     @Resource(name = "unKnownUserEventMessage") MessageChannel unKnownUserEventMessage;
 
-    @Autowired AppLoginHandler appLoginHandler;
+    @Resource(name = "chargeProcessChannel") MessageChannel chargeProcessChannel;
+    @Resource(name = "completeProcessChannel") MessageChannel completeProcessChannel;
+
+    @Autowired ChargeProcessingHandler chargeProcessingHandler;
+    @Autowired CompleteProcessingHandler completeProcessingHandler;
     @Autowired EndProcessingHandler endProcessingHandler;
+
     @Autowired NoneHandler noneHandler;
+    @Autowired ExceptionHandler exceptionHandler;
+    @Autowired FilterDiscardHandler filterDiscardHandler;
 
     @Autowired ParticipationHistoryFilter participationHistoryFilter;
     @Autowired UserActionExpireFilter userActionExpireFilter;
 
-    @Bean
-    public IntegrationFlow userEventStartPointFlow() {
+    @Bean("routerSpecEnrichHeaders")
+    public MessageHeaders routerSpecEnrichHeaders() {
+
+        Map<String, Object> errorChannelDefine = new HashMap<>();
+        errorChannelDefine.put(MessageHeaders.ERROR_CHANNEL, "exceptionChannel");
+        return new MessageHeaders(errorChannelDefine);
+
+    }
+
+    @Bean("filterEndpointConfigurer")
+    public Consumer<FilterEndpointSpec> filterEndpointConfigurer() {
+        return new Consumer<FilterEndpointSpec>() {
+            @Override
+            public void accept(FilterEndpointSpec filterEndpointSpec) {
+                filterEndpointSpec.discardChannel(filterDiscardChannel);
+            }
+        };
+    }
+
+    @Bean("userEventFilterFlow")
+    public IntegrationFlow userEventFilterFlow() {
 
         return IntegrationFlows.from(userEventMessageChannel)
             .<UserEventMessage, Class<?>>route(UserEventMessage::getClass, routerRouterSpec ->
                     routerRouterSpec
+                    .defaultOutputChannel(unKnownUserEventMessage)
                     .subFlowMapping(AppLoginUserEventMessage.class, subFlowMapping ->
                         subFlowMapping
+                        .enrichHeaders(routerSpecEnrichHeaders())
                         .channel(appLoginUserEventMessageChannel)
-                        .filter(participationHistoryFilter)
-                        .filter(userActionExpireFilter)
-                        .handle(appLoginHandler)
+                        .filter(participationHistoryFilter, filterEndpointConfigurer())
+                        .filter(userActionExpireFilter, filterEndpointConfigurer())
+                        .channel(defaultOutputChannel)
                     )
                     .subFlowMapping(UnKnownUserEventMessage.class, subFlowMapping ->
                         subFlowMapping
@@ -57,17 +92,44 @@ public class UserEventIntegrationConfiguration {
                         .handle(h -> {
 
                         })
-                    ).defaultOutputToParentFlow()
+                    )
             )
             .get();
+
     }
 
-    @Bean
-    public IntegrationFlow userEventEndPointFlow() {
+    @Bean("userEventProcessFlow")
+    public IntegrationFlow userEventProcessFlow() {
+
         return IntegrationFlows.from(defaultOutputChannel)
             .handle(endProcessingHandler)
+            .channel(chargeProcessChannel)
+            .handle(chargeProcessingHandler)
+            .channel(completeProcessChannel)
+            .handle(completeProcessingHandler)
+            .handle(message -> {
+
+            })
             .get();
+
     }
 
+    @Bean("exceptionProcessFlow")
+    public IntegrationFlow exceptionProcessFlow() {
+
+        return IntegrationFlows.from(exceptionChannel)
+            .handle(exceptionHandler)
+            .get();
+
+    }
+
+    @Bean("filterDiscardProcessFlow")
+    public IntegrationFlow filterDiscardProcessFlow() {
+
+        return IntegrationFlows.from(filterDiscardChannel)
+            .handle(filterDiscardHandler)
+            .get();
+
+    }
 
 }

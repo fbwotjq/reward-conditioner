@@ -8,19 +8,22 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * Created by KAKAO on 2017. 11. 22..
+ * Created by KAKAO on 2017. 11. 21..
  */
 @Slf4j
 @Component
-public class EndProcessingHandler implements GenericHandler<UserEventMessage> {
-
+public class ChargeProcessingHandler implements GenericHandler<UserEventMessage> {
 
     @Override
     public Object handle(UserEventMessage userEventMessage, Map<String, Object> map) {
 
         log.info("###############################################################################################################################################");
-        log.info(String.format("[EndProcessingHandler] %s,%s,%s", userEventMessage.getAccountId(), userEventMessage.getPlusFriendId(),
+        log.info(String.format("[ChargeProcessingHandler] %s,%s,%s", userEventMessage.getAccountId(), userEventMessage.getPlusFriendId(),
                 userEventMessage.getType()));
+
+        if(userEventMessage.getAccountId().equals("324341"))
+            userEventMessage.setAccountId(null);
+            userEventMessage.getAccountId().toString();
 
         return userEventMessage;
     }
